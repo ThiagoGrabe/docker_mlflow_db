@@ -8,7 +8,7 @@ MLFLOW_PORT=5000
 
 ALPHA = 0.002 0.02 0.2 2.0 20.0 200.0
 L1RATIO = 0.1 0.2
-EXPT = 'Testing2'
+EXPT = 'Testing3'
 
 mlflowpopulate:
 	# Populates entries in mlflow with the mlflow team's own mlflow-example.

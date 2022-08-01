@@ -19,19 +19,23 @@ services:
     db:
         restart: always
         image: postgres:latest
+        env_file:
+            - .env
         container_name: mlflow_db
         expose:
             - ${DB_PORT}
         networks:
             - backend
         environment:
-            - MUID=$UID
-            - MGID=$GID
+            - MUID='user'
+            - MGID='user'
             - POSTGRES_DB=${DB_NAME}
             - POSTGRES_USER=${DB_USER}
             - POSTGRES_PASSWORD=${DB_PW}
         volumes:
             - db_datapg:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
 
     app:
         restart: always
@@ -54,6 +58,7 @@ services:
         volumes:
             - mlrun_data:/mlruns
             - condenv:/opt/conda
+            - /mnt/c/workspace/vetta-ml:/home/vetta-ml
         command: 
             - sh
             - -c
