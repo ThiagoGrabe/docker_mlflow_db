@@ -34,6 +34,7 @@ services:
             - POSTGRES_PASSWORD=${DB_PW}
         volumes:
             - db_datapg:/var/lib/postgresql/data
+            - mlrun_data:/mnt
         ports:
             - 5432:5432
 
@@ -49,12 +50,9 @@ services:
             - backend
         environment:
             - BACKEND=postgresql://${DB_USER}:${DB_PW}@db:${DB_PORT}/${DB_NAME}
+            # - ARTIFACTS=/usr/src/app/mlruns
             - ARTIFACTS=/mlruns
-          # For artifact store in AWS S3 (note boto was installed in container):
-          #  - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-          #  - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-          #  - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
-          #  - ARTIFACTS="s3://mlflow_bucket/mlflow/"
+            
         volumes:
             - mlrun_data:/mlruns
             - condenv:/opt/conda
@@ -65,8 +63,11 @@ services:
             - mlflow server 
                 --port 5001
                 --host 0.0.0.0 
-                --backend-store-uri $${BACKEND} 
-                --default-artifact-root $${ARTIFACTS}
+                --backend-store-uri $${BACKEND}
+                --serve-artifacts
+                --artifacts-destination mlflow-artifacts:$${ARTIFACTS}
+                # --default-artifact-root $${ARTIFACTS}
+                
         depends_on:
             - db
 
